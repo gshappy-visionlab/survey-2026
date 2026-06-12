@@ -252,12 +252,12 @@ const questions = [
       "학교",
       "직장",
       "다음세대",
-      "이웃 - 주목자",
-      "이웃 - 이주민",
-      "이웃 - 북한",
-      "이웃 - 주변 이웃",
+      "이웃",
       "미디어",
     ],
+    nestedOptions: {
+      "이웃": ["주목자", "이주민", "북한", "주변 이웃"],
+    },
     allowOther: true,
     next: "q4_2",
   },
@@ -449,8 +449,14 @@ function createFollowupInput(question, answer) {
 }
 
 function createOption(question, inputType, labelText, index, answer) {
+  const nestedItems = question.nestedOptions?.[labelText];
+  const wrapper = nestedItems ? document.createElement("div") : null;
+  if (wrapper) {
+    wrapper.className = "nested-option-group";
+  }
+
   const label = document.createElement("label");
-  label.className = "option";
+  label.className = nestedItems ? "option has-nested-options" : "option";
 
   const input = document.createElement("input");
   input.type = inputType;
@@ -458,6 +464,9 @@ function createOption(question, inputType, labelText, index, answer) {
   input.value = labelText;
   input.checked = answer?.choices?.includes(labelText) || answer?.choice === labelText;
   input.addEventListener("change", () => {
+    if (nestedItems) {
+      updateNestedVisibility(wrapper, input.checked);
+    }
     if (!input.checked || !shouldAutoAdvance(question)) return;
     window.setTimeout(() => {
       handleNext();
@@ -468,7 +477,43 @@ function createOption(question, inputType, labelText, index, answer) {
   span.textContent = labelText;
 
   label.append(input, span);
-  return label;
+  if (!nestedItems) return label;
+
+  const nested = createNestedOptions(question.id, labelText, nestedItems, answer, input.checked);
+  wrapper.append(label, nested);
+  return wrapper;
+}
+
+function createNestedOptions(questionId, parentLabel, nestedItems, answer, isOpen) {
+  const nested = document.createElement("div");
+  nested.className = "nested-options";
+  nested.dataset.open = String(isOpen);
+
+  nestedItems.forEach((item) => {
+    const label = document.createElement("label");
+    label.className = "nested-option";
+
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.name = `${questionId}_${parentLabel}_details`;
+    input.value = item;
+    input.checked = answer?.details?.[parentLabel]?.includes(item) || false;
+
+    const span = document.createElement("span");
+    span.textContent = item;
+
+    label.append(input, span);
+    nested.appendChild(label);
+  });
+
+  return nested;
+}
+
+function updateNestedVisibility(wrapper, isOpen) {
+  const nested = wrapper?.querySelector(".nested-options");
+  if (nested) {
+    nested.dataset.open = String(isOpen);
+  }
 }
 
 function shouldAutoAdvance(question) {
@@ -533,7 +578,22 @@ function collectAnswer(question) {
   const other = (formData.get(`${question.id}_other`) || "").trim();
   const note = (formData.get(`${question.id}_note`) || "").trim();
   const choices = rawChoices.map((choice) => (choice === "__other__" ? "기타" : choice));
-  return { choices, other, note };
+  const details = collectNestedDetails(question, formData, choices);
+  return { choices, details, other, note };
+}
+
+function collectNestedDetails(question, formData, choices) {
+  if (!question.nestedOptions) return {};
+
+  return Object.keys(question.nestedOptions).reduce((details, parentLabel) => {
+    if (!choices.includes(parentLabel)) return details;
+
+    const selected = formData.getAll(`${question.id}_${parentLabel}_details`);
+    if (selected.length > 0) {
+      details[parentLabel] = selected;
+    }
+    return details;
+  }, {});
 }
 
 function validateAnswer(question, answer) {
@@ -551,11 +611,26 @@ function validateAnswer(question, answer) {
     return "하나 이상 선택해주세요.";
   }
 
+  if (question.type.startsWith("multi")) {
+    const nestedError = validateNestedDetails(question, answer);
+    if (nestedError) return nestedError;
+  }
+
   if (question.type !== "textarea" && hasOtherSelected(answer) && !answer.other) {
     return "기타를 선택했다면 내용을 입력해주세요.";
   }
 
   return "";
+}
+
+function validateNestedDetails(question, answer) {
+  if (!question.nestedOptions) return "";
+
+  const missingParent = Object.keys(question.nestedOptions).find((parentLabel) => {
+    return answer.choices.includes(parentLabel) && !answer.details?.[parentLabel]?.length;
+  });
+
+  return missingParent ? `${missingParent}의 세부 항목을 하나 이상 선택해주세요.` : "";
 }
 
 function hasOtherSelected(answer) {
@@ -707,6 +782,11 @@ function stringifyAnswer(answer) {
   const parts = [];
   if (answer.choice) parts.push(answer.choice);
   if (answer.choices?.length) parts.push(answer.choices.join(", "));
+  if (answer.details) {
+    Object.entries(answer.details).forEach(([label, values]) => {
+      if (values.length) parts.push(`${label}: ${values.join(", ")}`);
+    });
+  }
   if (answer.text) parts.push(answer.text);
   if (answer.other) parts.push(`기타: ${answer.other}`);
   if (answer.note) parts.push(`나눔: ${answer.note}`);
