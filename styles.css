@@ -181,7 +181,8 @@ h2 {
   transform: translateY(-1px);
 }
 
-.option input {
+.option > input[type="radio"],
+.option > input[type="checkbox"] {
   width: 18px;
   height: 18px;
   margin: 2px 0 0;
@@ -190,6 +191,20 @@ h2 {
 
 .option span {
   line-height: 1.45;
+}
+
+.other-field {
+  display: grid;
+  grid-template-columns: auto minmax(180px, 1fr);
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+}
+
+.other-field span {
+  color: var(--ink);
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .text-input,

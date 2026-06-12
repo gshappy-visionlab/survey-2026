@@ -454,12 +454,16 @@ function renderQuestion() {
   els.questionHelp.textContent = question.help || "";
   els.formError.textContent = "";
   els.answerForm.innerHTML = "";
-  els.backBtn.disabled = state.history.length === 0 || state.submitting || state.transitioning;
-  els.nextBtn.disabled = state.submitting || state.transitioning;
   els.nextBtn.textContent = question.next === "submit" ? "제출" : "다음";
 
   renderInput(question, answer);
+  updateControls();
   updateProgress();
+}
+
+function updateControls() {
+  els.backBtn.disabled = state.history.length === 0 || state.submitting || state.transitioning;
+  els.nextBtn.disabled = state.submitting || state.transitioning;
 }
 
 function renderInput(question, answer) {
@@ -536,7 +540,14 @@ function createOtherInput(questionId, inputType, answer) {
     input.checked = true;
   });
 
-  wrapper.append(input, text);
+  const field = document.createElement("span");
+  field.className = "other-field";
+
+  const caption = document.createElement("span");
+  caption.textContent = "기타";
+
+  field.append(caption, text);
+  wrapper.append(input, field);
   return wrapper;
 }
 
@@ -656,7 +667,7 @@ async function transitionToQuestion(nextId, options = {}) {
   await wait(280);
   els.surveyView.classList.remove("is-entering");
   state.transitioning = false;
-  renderQuestion();
+  updateControls();
 }
 
 async function handleNext() {
