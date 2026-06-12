@@ -610,7 +610,7 @@ function updateProgress() {
   const totalCount = questions.length;
   const percent = Math.min(100, Math.max(4, ((answeredCount + 1) / totalCount) * 100));
   els.progressFill.style.width = `${percent}%`;
-  els.progressText.textContent = `${Math.min(answeredCount + 1, totalCount)} / ${totalCount}`;
+  els.progressText.textContent = `${Math.round(percent)}%`;
 }
 
 function wait(ms) {
