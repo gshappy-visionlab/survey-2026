@@ -32,12 +32,12 @@ const questions = [
   {
     id: "q1_3",
     section: "복음에 대한 이해 부족",
-    title: "나는 복음이 나와 어떤 관련이 있는지 아나요?",
+    title: "복음과 나와의 연결고리가 잘 느껴지지 않는다",
     type: "single",
     required: true,
     options: [
-      { label: "나는 복음을 안다.", next: "q1_5" },
-      { label: "나는 복음을 모른다.", next: "q1_4" },
+      { label: "그렇다", next: "q1_4" },
+      { label: "아니다", next: "q1_5" },
     ],
   },
   {
@@ -62,7 +62,7 @@ const questions = [
     type: "single",
     required: true,
     options: [
-      { label: "깊이 생각한다.", next: "q1_8" },
+      { label: "깊이 생각한다.", next: "q1_7" },
       { label: "깊이 생각하지 않는다.", next: "q1_6" },
     ],
   },
@@ -113,38 +113,17 @@ const questions = [
   },
   {
     id: "q1_9",
-    section: "관계적 연결 부족",
-    title: "나는 나의 신앙을 함께 나눌 관계가 부족하다.",
-    type: "single",
-    required: true,
-    options: [
-      { label: "네", next: "q1_10" },
-      { label: "아니오", next: "q1_11" },
-    ],
-  },
-  {
-    id: "q1_10",
-    section: "관계적 연결 부족",
-    title: "왜 부족한가요?",
-    type: "single",
-    required: true,
-    options: ["판단받을 것 같다.", "깊은 관계가 없다."],
-    allowOther: true,
-    next: "q1_11",
-  },
-  {
-    id: "q1_11",
     section: "개인적 상처와 의문",
     title: "나는 하나님에 대해 해결되지 않은 의문이 있다.",
     type: "single",
     required: true,
     options: [
-      { label: "네", next: "q1_12" },
+      { label: "네", next: "q1_10" },
       { label: "아니오", next: "q2_1" },
     ],
   },
   {
-    id: "q1_12",
+    id: "q1_10",
     section: "개인적 상처와 의문",
     title: "어떤 의문인가요?",
     type: "multi",
@@ -767,7 +746,7 @@ function getResultType() {
   const answers = state.answers;
   if (answers.q3_1?.choice === "네") return "witness";
   if (answers.q5_2?.choice === "안다") return "vision";
-  if (answers.q1_3?.choice === "나는 복음을 모른다.") return "gospel";
+  if (answers.q1_3?.choice === "그렇다") return "gospel";
   if (answers.q3_2) return "courage";
   return "reflection";
 }
