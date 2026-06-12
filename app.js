@@ -161,9 +161,9 @@ const questions = [
     id: "q2_2",
     section: "나의 복음",
     title: "나의 언어로 정리된 나의 복음이 있나요? 복음이 뭐라고 생각하나요?",
-    help: "하나 이상의 간증이나 문장으로 자유롭게 적어주세요.",
+    help: "하나 이상의 간증이나 문장으로 자유롭게 적어주세요. 선택 입력입니다.",
     type: "textarea",
-    required: true,
+    required: false,
     next: "q3_1",
   },
   {
