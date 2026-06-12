@@ -472,7 +472,7 @@ function renderInput(question, answer) {
     const inputType = question.type.startsWith("single") ? "radio" : "checkbox";
     question.options.forEach((option, index) => {
       const label = typeof option === "string" ? option : option.label;
-      els.answerForm.appendChild(createOption(question.id, inputType, label, index, answer));
+      els.answerForm.appendChild(createOption(question, inputType, label, index, answer));
     });
 
     if (question.allowOther) {
@@ -490,21 +490,31 @@ function renderInput(question, answer) {
   }
 }
 
-function createOption(questionId, inputType, labelText, index, answer) {
+function createOption(question, inputType, labelText, index, answer) {
   const label = document.createElement("label");
   label.className = "option";
 
   const input = document.createElement("input");
   input.type = inputType;
-  input.name = questionId;
+  input.name = question.id;
   input.value = labelText;
   input.checked = answer?.choices?.includes(labelText) || answer?.choice === labelText;
+  input.addEventListener("change", () => {
+    if (!input.checked || !shouldAutoAdvance(question)) return;
+    window.setTimeout(() => {
+      handleNext();
+    }, 120);
+  });
 
   const span = document.createElement("span");
   span.textContent = labelText;
 
   label.append(input, span);
   return label;
+}
+
+function shouldAutoAdvance(question) {
+  return question.type === "single" && question.options?.length === 2 && !question.allowOther;
 }
 
 function createOtherInput(questionId, inputType, answer) {
