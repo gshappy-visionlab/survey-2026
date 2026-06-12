@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>비전 설문</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="survey-panel" id="survey-view">
+        <header class="survey-header">
+          <p class="kicker">Vision Survey</p>
+          <h1>나의 복음과 비전 돌아보기</h1>
+          <div class="progress-wrap" aria-label="설문 진행률">
+            <div class="progress-bar">
+              <span id="progress-fill"></span>
+            </div>
+            <span id="progress-text">1 / 1</span>
+          </div>
+        </header>
+
+        <section class="question-card">
+          <p class="section-label" id="section-label"></p>
+          <h2 id="question-title"></h2>
+          <p class="question-help" id="question-help"></p>
+          <form id="answer-form" class="answer-form"></form>
+          <p class="form-error" id="form-error" role="alert"></p>
+        </section>
+
+        <footer class="nav-actions">
+          <button class="ghost-btn" id="back-btn" type="button">이전</button>
+          <button class="primary-btn" id="next-btn" type="button">다음</button>
+        </footer>
+      </section>
+
+      <section class="result-panel hidden" id="result-view">
+        <p class="kicker">Survey Result</p>
+        <h1 id="result-title"></h1>
+        <p id="result-copy"></p>
+        <div class="result-box">
+          <h2>다음 걸음</h2>
+          <ul id="result-actions"></ul>
+        </div>
+        <button class="primary-btn" id="restart-btn" type="button">처음부터 다시하기</button>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
