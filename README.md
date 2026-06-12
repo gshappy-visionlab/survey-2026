@@ -1,4 +1,4 @@
-# 비전 설문 페이지
+# Bridge Survey 페이지
 
 정적 HTML/CSS/JS로 만든 분기형 설문 페이지입니다. `index.html`을 브라우저에서 열면 바로 실행됩니다.
 
