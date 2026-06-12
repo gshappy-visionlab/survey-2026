@@ -142,7 +142,7 @@ const questions = [
     id: "q2_1",
     section: "나의 복음",
     title: "복음을 어떻게 알게 되었나요?",
-    help: "가장 가까운 이유를 선택하고 한 줄로 짧게 이야기해주세요. 복수 선택이 가능합니다.",
+    help: "가장 가까운 이유를 선택해주세요. 복수 선택이 가능합니다.",
     type: "multiText",
     required: true,
     options: [
@@ -154,7 +154,7 @@ const questions = [
       "누군가의 전도를 통해",
     ],
     allowOther: true,
-    textLabel: "한 줄 나눔",
+    textLabel: "복음을 알게 된 이야기를 한 줄로 짧게 나눠주세요. (선택)",
     next: "q2_2",
   },
   {
@@ -265,7 +265,7 @@ const questions = [
     id: "q4_2",
     section: "복음을 전한 경험",
     title: "복음을 전하게 된 계기는 무엇인가요?",
-    help: "짧게 나눠주세요.",
+    help: "가장 가까운 계기를 선택해주세요.",
     type: "singleText",
     required: true,
     options: [
@@ -277,7 +277,7 @@ const questions = [
       { label: "선교를 통해서", next: "q4_4" },
     ],
     allowOther: true,
-    textLabel: "한 줄 나눔",
+    textLabel: "그 계기를 한 줄로 짧게 나눠주세요. (선택)",
     next: "q4_4",
   },
   {
@@ -461,14 +461,29 @@ function renderInput(question, answer) {
     }
 
     if (question.type.endsWith("Text")) {
-      const text = document.createElement("input");
-      text.className = "text-input";
-      text.name = `${question.id}_note`;
-      text.placeholder = question.textLabel || "짧게 적어주세요";
-      text.value = answer?.note || "";
-      els.answerForm.appendChild(text);
+      els.answerForm.appendChild(createFollowupInput(question, answer));
     }
   }
+}
+
+function createFollowupInput(question, answer) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "followup-field";
+
+  const label = document.createElement("label");
+  label.className = "followup-title";
+  label.htmlFor = `${question.id}_note`;
+  label.textContent = question.textLabel || "한 줄 나눔 (선택)";
+
+  const text = document.createElement("input");
+  text.id = `${question.id}_note`;
+  text.className = "text-input";
+  text.name = `${question.id}_note`;
+  text.placeholder = "자유롭게 적어주세요";
+  text.value = answer?.note || "";
+
+  wrapper.append(label, text);
+  return wrapper;
 }
 
 function createOption(question, inputType, labelText, index, answer) {
@@ -576,10 +591,6 @@ function validateAnswer(question, answer) {
 
   if (question.type !== "textarea" && hasOtherSelected(answer) && !answer.other) {
     return "기타를 선택했다면 내용을 입력해주세요.";
-  }
-
-  if (question.type.endsWith("Text") && !answer.note) {
-    return "한 줄 나눔을 입력해주세요.";
   }
 
   return "";
