@@ -44,6 +44,7 @@ textarea {
   padding: 40px 0;
 }
 
+.cover-panel,
 .survey-panel,
 .result-panel {
   width: 100%;
@@ -52,6 +53,55 @@ textarea {
   border-radius: 8px;
   box-shadow: var(--shadow);
   padding: clamp(22px, 4vw, 42px);
+}
+
+.cover-panel {
+  display: grid;
+  gap: 18px;
+  align-content: center;
+  min-height: min(760px, calc(100vh - 80px));
+}
+
+.cover-panel h1 {
+  max-width: 760px;
+  font-size: clamp(2.5rem, 7vw, 5.2rem);
+}
+
+.cover-subtitle {
+  margin: -4px 0 0;
+  color: var(--accent);
+  font-size: clamp(1.3rem, 3.2vw, 2rem);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.cover-meta {
+  margin: 6px 0 0;
+  color: var(--ink);
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  font-weight: 800;
+}
+
+.cover-verse {
+  margin: 16px 0 4px;
+  padding: 18px 20px;
+  border-left: 4px solid var(--accent);
+  background: #fffaf1;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.cover-verse span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--accent-strong);
+  font-weight: 900;
+}
+
+.cover-start {
+  justify-self: start;
+  min-width: 156px;
+  margin-top: 10px;
 }
 
 .survey-header {

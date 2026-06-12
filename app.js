@@ -370,6 +370,7 @@ const state = {
 };
 
 const els = {
+  coverView: document.querySelector("#cover-view"),
   surveyView: document.querySelector("#survey-view"),
   resultView: document.querySelector("#result-view"),
   questionTitle: document.querySelector("#question-title"),
@@ -383,8 +384,15 @@ const els = {
   resultTitle: document.querySelector("#result-title"),
   resultCopy: document.querySelector("#result-copy"),
   resultActions: document.querySelector("#result-actions"),
+  startBtn: document.querySelector("#start-btn"),
   restartBtn: document.querySelector("#restart-btn"),
 };
+
+function startSurvey() {
+  els.coverView.classList.add("hidden");
+  els.surveyView.classList.remove("hidden");
+  renderQuestion();
+}
 
 function renderQuestion() {
   const question = questionMap.get(state.currentId);
@@ -856,12 +864,12 @@ function restart() {
   state.transitioning = false;
   els.resultView.classList.add("hidden");
   els.resultView.classList.remove("is-entering");
+  els.coverView.classList.remove("hidden");
   els.surveyView.classList.remove("hidden");
-  renderQuestion();
+  els.surveyView.classList.add("hidden");
 }
 
+els.startBtn.addEventListener("click", startSurvey);
 els.nextBtn.addEventListener("click", handleNext);
 els.backBtn.addEventListener("click", handleBack);
 els.restartBtn.addEventListener("click", restart);
-
-renderQuestion();
