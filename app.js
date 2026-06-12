@@ -4,18 +4,18 @@ const questions = [
   {
     id: "q1_1",
     section: "하나님에 대한 필요",
-    title: "나는 하나님이 내 삶에 꼭 필요하다고 느끼나요?",
+    title: "하나님이 필요한가요?",
     type: "single",
     required: true,
     options: [
-      { label: "필요하다고 느낀다", next: "q1_3" },
-      { label: "필요하다고 느끼지 않는다", next: "q1_2" },
+      { label: "필요하다", next: "q1_3" },
+      { label: "필요하지 않다", next: "q1_2" },
     ],
   },
   {
     id: "q1_2",
     section: "하나님에 대한 필요",
-    title: "하나님이 필요하다고 느끼지 않는 가장 큰 이유는 무엇입니까?",
+    title: "하나님이 필요하지 않다고 느끼는 가장 큰 이유는 무엇인가요?",
     help: "복수 선택이 가능합니다.",
     type: "multi",
     required: true,
@@ -32,7 +32,7 @@ const questions = [
   {
     id: "q1_3",
     section: "복음에 대한 이해 부족",
-    title: "복음과 나와의 연결고리가 잘 느껴지지 않는다",
+    title: "복음은 나와 상관이 없다.",
     type: "single",
     required: true,
     options: [
@@ -43,7 +43,7 @@ const questions = [
   {
     id: "q1_4",
     section: "복음에 대한 이해 부족",
-    title: "어떠한 이유로 복음과 나의 연결고리가 없다고 생각하나요?",
+    title: "어떤 이유로 복음이 나와 상관없다고 생각하나요?",
     type: "single",
     required: true,
     options: [
@@ -58,12 +58,12 @@ const questions = [
   {
     id: "q1_5",
     section: "영적 무관심",
-    title: "나는 신앙이나 영적인 문제에 대해 생각하나요?",
+    title: "신앙이나 영적인 문제에 대해 깊이 생각해 본 적이 있나요?",
     type: "single",
     required: true,
     options: [
-      { label: "깊이 생각한다.", next: "q1_7" },
-      { label: "깊이 생각하지 않는다.", next: "q1_6" },
+      { label: "깊이 생각해 본 적이 있다.", next: "q1_7" },
+      { label: "깊이 생각해 본 적이 없다.", next: "q1_6" },
     ],
   },
   {
@@ -84,7 +84,7 @@ const questions = [
   {
     id: "q1_7",
     section: "바쁨과 우선순위",
-    title: "나는 하나님과의 관계를 우선순위에 두고 있나요?",
+    title: "하나님과의 관계를 우선순위에 두고 있나요?",
     type: "single",
     required: true,
     options: [
@@ -114,7 +114,7 @@ const questions = [
   {
     id: "q1_9",
     section: "개인적 상처와 의문",
-    title: "나는 하나님에 대해 해결되지 않은 의문이 있다.",
+    title: "하나님에 대해 해결되지 않은 의문이 있나요?",
     type: "single",
     required: true,
     options: [
@@ -160,7 +160,7 @@ const questions = [
   {
     id: "q2_2",
     section: "나의 복음",
-    title: "나의 언어로 정리된 나의 복음이 있나요? 복음이 뭐라고 생각하나요?",
+    title: "나의 언어로 정리한 복음이 있나요? 복음은 무엇이라고 생각하나요?",
     help: "하나 이상의 간증이나 문장으로 자유롭게 적어주세요. 선택 입력입니다.",
     type: "textarea",
     required: false,
@@ -180,7 +180,7 @@ const questions = [
   {
     id: "q3_2",
     section: "복음 전하기",
-    title: "왜 어렵거나 왜 전하지 못하고 있나요?",
+    title: "복음을 전하기 어려운 이유가 무엇인가요?",
     help: "복수 선택이 가능합니다. 선택에 따라 추가 질문이 이어집니다.",
     type: "multi",
     required: true,
@@ -297,7 +297,7 @@ const questions = [
   {
     id: "q4_4",
     section: "복음을 전한 경험",
-    title: "어떻게 복음을 전할 수 있는 변화가 있었나요?",
+    title: "복음을 전할 수 있게 된 변화가 있었나요?",
     help: "심층 인터뷰가 가능하다면 또래, 이름, 연락처도 선택적으로 남겨주세요.",
     type: "textarea",
     required: false,
@@ -325,7 +325,7 @@ const questions = [
   {
     id: "q5_2",
     section: "비전과 사명",
-    title: "하나님께서 나에게 맡겨주신 비전/사명을 알고 있나요?",
+    title: "하나님께서 나에게 맡겨주신 비전이나 사명을 알고 있나요?",
     type: "single",
     required: true,
     options: [
@@ -336,10 +336,10 @@ const questions = [
   {
     id: "q5_3",
     section: "비전과 사명",
-    title: "비전/사명이 무엇인가요?",
+    title: "비전이나 사명이 무엇인가요?",
     type: "textarea",
     required: true,
-    next: "q5_5",
+    next: "submit",
   },
   {
     id: "q5_4",
@@ -354,44 +354,6 @@ const questions = [
       "하나님의 길을 따를 자신이 없음",
       "나는 재능과 은사가 없는 것 같음",
       "당장 살아내야 할 현실이 버겁다",
-    ],
-    next: "q5_5",
-  },
-  {
-    id: "q5_5",
-    section: "청년세대의 어려움",
-    title: "청년세대의 가장 큰 어려움, 혹은 믿음을 지키기 어려운 순간은 무엇인가요?",
-    type: "multi",
-    required: true,
-    options: [
-      "세상과 기독교 가치관의 대립",
-      "홀로 버티는 고립감",
-      "분별하기 어려움",
-      "바쁨",
-      "주님을 향해 아직 풀리지 않은 억울함",
-      "먹고 살기 힘든 시대의 모습(우선순위 밀림)",
-    ],
-    next: "q5_6",
-  },
-  {
-    id: "q5_6",
-    section: "소망과 회복",
-    title: "그럼에도 불구하고 나의 소망은 무엇인가요?",
-    type: "textarea",
-    required: true,
-    next: "q5_7",
-  },
-  {
-    id: "q5_7",
-    section: "소망과 회복",
-    title: "우리에게 회복되어야 할 것은 무엇인가요?",
-    type: "multi",
-    required: true,
-    options: [
-      "초대교회의 역동성",
-      "덮어주고 용납하는 사랑",
-      "어떤 순간에도 복음을 전하는 야성",
-      "세상 속 믿음의 증인들",
     ],
     next: "submit",
   },
