@@ -410,7 +410,6 @@ const state = {
 const els = {
   surveyView: document.querySelector("#survey-view"),
   resultView: document.querySelector("#result-view"),
-  sectionLabel: document.querySelector("#section-label"),
   questionTitle: document.querySelector("#question-title"),
   questionHelp: document.querySelector("#question-help"),
   answerForm: document.querySelector("#answer-form"),
@@ -428,7 +427,6 @@ const els = {
 function renderQuestion() {
   const question = questionMap.get(state.currentId);
   const answer = state.answers[question.id];
-  els.sectionLabel.textContent = question.section || "";
   els.questionTitle.textContent = question.title;
   els.questionHelp.textContent = question.help || "";
   els.formError.textContent = "";

@@ -60,8 +60,7 @@ textarea {
   margin-bottom: 28px;
 }
 
-.kicker,
-.section-label {
+.kicker {
   margin: 0;
   color: var(--accent);
   font-size: 0.82rem;
