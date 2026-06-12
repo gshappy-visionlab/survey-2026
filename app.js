@@ -1,4 +1,4 @@
-const GOOGLE_SCRIPT_URL = "";
+const GOOGLE_SCRIPT_URL = window.SURVEY_CONFIG?.googleScriptUrl || "";
 
 const questions = [
   {
