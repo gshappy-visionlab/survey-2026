@@ -1,7 +1,38 @@
 const GOOGLE_SCRIPT_URL = window.SURVEY_CONFIG?.googleScriptUrl || "";
 const MULTI_SELECT_HELP = "복수 선택이 가능합니다.";
+const START_QUESTION_ID = "q0_1";
 
 const questions = [
+  {
+    id: "q0_1",
+    section: "기본 정보",
+    title: "또래에 해당하는 셀그룹을 선택해주세요.",
+    type: "single",
+    required: true,
+    options: [
+      { label: "샤인(92~95)", next: "q0_2" },
+      { label: "하모니(96~99)", next: "q0_2" },
+      { label: "멜로디(00~03)", next: "q0_2" },
+      { label: "조이(04~06) / 07또래", next: "q0_2" },
+    ],
+  },
+  {
+    id: "q0_2",
+    section: "기본 정보",
+    title: "젊은이교회 과거에 참여했거나 참여 중인 활동을 선택해주세요. (누적)",
+    type: "multi",
+    required: true,
+    options: [
+      "새신자입니다",
+      "양육수료",
+      "제자훈련",
+      "국내선교/해외선교(MST)",
+      "셀 참여",
+      "섬김 및 봉사 (사역팀원 / 본교회 섬김 / 드림빌더 / 통일빌더 / 주목자 등)",
+      "리더 (사역팀 리더 / 셀리더 등)",
+    ],
+    next: "q1_1",
+  },
   {
     id: "q1_1",
     section: "하나님에 대한 필요",
@@ -343,7 +374,7 @@ const questions = [
 const questionMap = new Map(questions.map((question) => [question.id, question]));
 
 const state = {
-  currentId: "q1_1",
+  currentId: START_QUESTION_ID,
   history: [],
   answers: {},
   submitting: false,
@@ -858,7 +889,7 @@ const resultContent = {
 };
 
 function restart() {
-  state.currentId = "q1_1";
+  state.currentId = START_QUESTION_ID;
   state.history = [];
   state.answers = {};
   state.submitting = false;
