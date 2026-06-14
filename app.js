@@ -246,6 +246,7 @@ const questions = [
         "이단으로 보일까 봐",
       ],
     },
+    allowOther: true,
     next: "q4_1_no",
   },
   {
