@@ -386,9 +386,30 @@ const els = {
   resultActions: document.querySelector("#result-actions"),
   startBtn: document.querySelector("#start-btn"),
   restartBtn: document.querySelector("#restart-btn"),
+  consentModal: document.querySelector("#consent-modal"),
+  consentCheckbox: document.querySelector("#consent-checkbox"),
+  consentCloseBtn: document.querySelector("#consent-close-btn"),
+  consentConfirmBtn: document.querySelector("#consent-confirm-btn"),
 };
 
+function openConsentModal() {
+  els.consentCheckbox.checked = false;
+  els.consentConfirmBtn.disabled = true;
+  els.consentModal.classList.remove("hidden");
+  els.consentCheckbox.focus();
+}
+
+function closeConsentModal() {
+  els.consentModal.classList.add("hidden");
+  els.startBtn.focus();
+}
+
+function updateConsentButton() {
+  els.consentConfirmBtn.disabled = !els.consentCheckbox.checked;
+}
+
 function startSurvey() {
+  els.consentModal.classList.add("hidden");
   els.coverView.classList.add("hidden");
   els.surveyView.classList.remove("hidden");
   renderQuestion();
@@ -982,7 +1003,10 @@ function restart() {
   els.surveyView.classList.add("hidden");
 }
 
-els.startBtn.addEventListener("click", startSurvey);
+els.startBtn.addEventListener("click", openConsentModal);
+els.consentCheckbox.addEventListener("change", updateConsentButton);
+els.consentCloseBtn.addEventListener("click", closeConsentModal);
+els.consentConfirmBtn.addEventListener("click", startSurvey);
 els.nextBtn.addEventListener("click", handleNext);
 els.backBtn.addEventListener("click", handleBack);
 els.restartBtn.addEventListener("click", restart);
