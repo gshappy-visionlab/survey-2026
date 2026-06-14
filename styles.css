@@ -58,10 +58,11 @@ textarea {
 .cover-panel {
   display: grid;
   gap: 20px;
-  align-content: center;
-  min-height: min(760px, calc(100vh - 80px));
+  align-content: start;
   position: relative;
   overflow: hidden;
+  padding-top: clamp(32px, 5vw, 56px);
+  padding-bottom: clamp(32px, 5vw, 56px);
 }
 
 .cover-panel::before {
@@ -106,10 +107,34 @@ textarea {
   font-weight: 900;
 }
 
+.cover-intro {
+  display: grid;
+  gap: 14px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.cover-intro p {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(0.96rem, 2vw, 1.05rem);
+  line-height: 1.9;
+}
+
+.cover-intro p:first-child {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.cover-closing {
+  color: var(--ink) !important;
+  font-weight: 700 !important;
+}
+
 .cover-start {
   justify-self: start;
   min-width: 168px;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .survey-header {
