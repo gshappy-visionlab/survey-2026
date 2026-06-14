@@ -4,12 +4,12 @@ const questions = [
   {
     id: "q1_1",
     section: "하나님에 대한 필요",
-    title: "하나님이 필요한가요?",
+    title: "나는 하나님이 필요한 사람인가요?",
     type: "single",
     required: true,
     options: [
-      { label: "필요하다", next: "q1_3" },
-      { label: "필요하지 않다", next: "q1_2" },
+      { label: "나는 하나님이 필요합니다.", next: "q1_3" },
+      { label: "그다지 필요하지 않다고 생각합니다.", next: "q1_2" },
     ],
   },
   {
@@ -32,25 +32,25 @@ const questions = [
   {
     id: "q1_3",
     section: "복음에 대한 이해 부족",
-    title: "복음은 나와 상관이 없다.",
+    title: "예수님이 나를 위해 십자가를 지셨다는 것이 믿어지나요?",
     type: "single",
     required: true,
     options: [
-      { label: "그렇다", next: "q1_4" },
-      { label: "아니다", next: "q1_5" },
+      { label: "믿어집니다.", next: "q1_5" },
+      { label: "아직 모르겠습니다.", next: "q1_4" },
     ],
   },
   {
     id: "q1_4",
     section: "복음에 대한 이해 부족",
-    title: "어떤 이유로 복음이 나와 상관없다고 생각하나요?",
+    title: "어떤 이유로 믿어지지 않나요?",
     help: "복수 선택이 가능합니다.",
     type: "multi",
     required: true,
     options: [
-      "복음의 내용을 잘 모르기 때문이다.",
-      "복음이 현실 문제와 연결되지 않는다고 생각한다.",
-      "이미 들어봤지만 특별한 의미를 느끼지 못했다.",
+      "내용을 잘 모르기 때문이다.",
+      "현실과 연결되지 않는다고 생각한다.",
+      "들어봤지만 특별한 의미를 느끼지 못했다.",
       "나와는 다른 사람들을 위한 이야기라고 생각한다.",
     ],
     allowOther: true,
@@ -63,22 +63,23 @@ const questions = [
     type: "single",
     required: true,
     options: [
-      { label: "깊이 생각해 본 적이 있다.", next: "q1_7" },
+      { label: "깊이 생각해 본 적이 있다.", next: "q1_9" },
       { label: "깊이 생각해 본 적이 없다.", next: "q1_6" },
     ],
   },
   {
     id: "q1_6",
     section: "영적 무관심",
-    title: "왜 깊이 생각하지 않았나요?",
+    title: "이유가 무엇인가요?",
     help: "복수 선택이 가능합니다.",
     type: "multi",
     required: true,
     options: [
       "신앙보다 중요한 일이 많다.",
       "하나님에 대해 궁금한 점이 없다.",
-      "과거에 실망한 경험이 있다.",
+      "하나님에 대해 실망한 경험이 있다.",
       "바빠서 생각할 여유가 없다.",
+      "하나님의 뜻이 뭔지 모르겠다.",
     ],
     allowOther: true,
     next: "q1_7",
@@ -90,55 +91,39 @@ const questions = [
     type: "single",
     required: true,
     options: [
-      { label: "네", next: "q1_9" },
+      { label: "네", next: "q1_8" },
       { label: "아니오", next: "q1_8" },
     ],
   },
   {
     id: "q1_8",
     section: "바쁨과 우선순위",
-    title: "최근 가장 많은 관심과 에너지를 쏟고 있는 것은 무엇입니까?",
+    title: "최근 많은 관심과 에너지를 쏟고 있는 것은 무엇인가요?",
     type: "multi",
     required: true,
     options: [
-      "학업",
-      "취업 준비",
-      "직장",
-      "경제적 문제",
-      "연애 및 인간관계",
+      "학업 / 자기개발",
+      "취업 / 진로준비",
+      "직장 / 커리어",
+      "연애 / 인간관계",
       "취미 및 여가",
-      "미래에 대한 불안",
-      "SNS",
-    ],
-    allowOther: true,
-    next: "q1_9",
-  },
-  {
-    id: "q1_9",
-    section: "개인적 상처와 의문",
-    title: "하나님에 대해 해결되지 않은 의문이 있나요?",
-    type: "single",
-    required: true,
-    options: [
-      { label: "네", next: "q1_10" },
-      { label: "아니오", next: "q2_1" },
-    ],
-  },
-  {
-    id: "q1_10",
-    section: "개인적 상처와 의문",
-    title: "어떤 의문인가요?",
-    type: "multi",
-    required: true,
-    options: [
-      "하나님이 존재하는가?",
-      "왜 고난이 있는가?",
-      "기독교만이 진리인가?",
-      "과학과 신앙은 양립할 수 있는가?",
-      "기도는 왜 응답되지 않는가?",
+      "재정관리 / 경제적 안정",
+      "미디어 소비",
+      "신앙생활 및 영적성장",
     ],
     allowOther: true,
     next: "q2_1",
+  },
+  {
+    id: "q1_9",
+    section: "영적 무관심",
+    title: "하나님의 뜻을 구하며 기도하는 영역이 있나요?",
+    type: "single",
+    required: true,
+    options: [
+      { label: "네, 있습니다.", next: "q1_7" },
+      { label: "아니오, 딱히 없습니다.", next: "q1_6" },
+    ],
   },
   {
     id: "q2_1",
@@ -148,6 +133,7 @@ const questions = [
     type: "multiText",
     required: true,
     options: [
+      "복음을 잘 모릅니다.",
       "예배를 통해 (찬양, 말씀, 기도)",
       "공동체를 통해 (환대, 구별됨, 믿음의 사람 등)",
       "선교를 통해",
@@ -156,16 +142,17 @@ const questions = [
       "누군가의 전도를 통해",
     ],
     allowOther: true,
-    textLabel: "복음을 알게 된 이야기를 한 줄로 짧게 나눠주세요. (선택)",
+    textLabel: "복음을 알게 된 이야기를 한 줄로 짧게 나눠주세요.",
+    noteRequired: true,
     next: "q2_2",
   },
   {
     id: "q2_2",
     section: "나의 복음",
-    title: "나의 언어로 정리한 복음이 있나요? 복음은 무엇이라고 생각하나요?",
-    help: "하나 이상의 간증이나 문장으로 자유롭게 적어주세요. 선택 입력입니다.",
+    title: "나의 언어로 정리된 나의 복음이 있나요? 복음이 뭐라고 생각하나요?",
+    help: "하나 이상의 간증이나 문장으로 자유롭게 적어주세요. 작성하기 어렵다면 단어로도 좋습니다.",
     type: "textarea",
-    required: false,
+    required: true,
     next: "q3_1",
   },
   {
@@ -638,6 +625,10 @@ function validateAnswer(question, answer) {
     return "기타를 선택했다면 내용을 입력해주세요.";
   }
 
+  if (question.noteRequired && !answer.note) {
+    return "한 줄 나눔을 입력해주세요.";
+  }
+
   return "";
 }
 
@@ -815,7 +806,7 @@ function getResultType() {
   const answers = state.answers;
   if (answers.q3_1?.choice === "네") return "witness";
   if (answers.q5_2?.choice === "안다") return "vision";
-  if (answers.q1_3?.choice === "그렇다") return "gospel";
+  if (answers.q1_3?.choice === "아직 모르겠습니다.") return "gospel";
   if (answers.q3_2) return "courage";
   return "reflection";
 }
