@@ -174,17 +174,17 @@ const questions = [
     type: "multi",
     required: true,
     options: [
-      "사실 복음을 잘 모른다",
-      "전할 대상이 없다",
+      "사실 복음을 잘 몰라서",
+      "전할 대상이 없어서",
       "복음대로 살고 있지 못해서",
-      "전하기 두렵다 (시선, 관계)",
-      "전해야 할 이유를 모르겠다",
+      "전하기 두려워서 (시선, 관계)",
+      "전해야 할 이유를 모르겠어서",
     ],
     allowOther: true,
     next: (answers) => {
       const selected = answers.q3_2?.choices || [];
       if (selected.includes("복음대로 살고 있지 못해서")) return "q3_3";
-      if (selected.includes("전하기 두렵다 (시선, 관계)")) return "q3_4";
+      if (selected.includes("전하기 두려워서 (시선, 관계)")) return "q3_4";
       return "q4_1_no";
     },
   },
@@ -195,17 +195,18 @@ const questions = [
     type: "multi",
     required: true,
     options: [
-      "용서하기 어려운 사람이 있다",
-      "재물을 더 사랑한다",
-      "시간의 우선순위를 드리지 못한다",
-      "말씀에 순종하지 못하고 있다",
-      "삶에 염려함이 있다",
-      "끊어내지 못한 죄가 있다",
+      "용서하기 어려운 사람이 있다.",
+      "재물을 더 사랑한다.",
+      "시간의 우선순위를 드리지 못한다.",
+      "말씀에 순종하지 못하고 있다.",
+      "삶에 염려함이 있다.",
+      "끊어내지 못한 죄가 있다.",
+      "그리스도인으로 구별된 삶을 살지 못하고 있다.",
     ],
     allowOther: true,
     next: (answers) => {
       const selected = answers.q3_2?.choices || [];
-      return selected.includes("전하기 두렵다 (시선, 관계)") ? "q3_4" : "q4_1_no";
+      return selected.includes("전하기 두려워서 (시선, 관계)") ? "q3_4" : "q4_1_no";
     },
   },
   {
@@ -263,41 +264,26 @@ const questions = [
     section: "복음을 전한 경험",
     title: "복음을 전하게 된 계기는 무엇인가요?",
     help: "가장 가까운 계기를 선택해주세요.",
-    type: "singleText",
+    type: "single",
     required: true,
     options: [
-      { label: "말씀에 순종해서", next: "q4_3" },
-      { label: "주시는 마음에 반응해서", next: "q4_3" },
+      { label: "말씀에 순종해서", next: "q4_4" },
+      { label: "주시는 마음에 반응해서", next: "q4_4" },
       { label: "기회가 생겨서 (새생명전도축제, 대화 중에)", next: "q4_4" },
       { label: "더 이상 미룰 수 없어서 / 대상자에게 더 이상 기회가 없을 것 같아서", next: "q4_4" },
       { label: "사역을 통해서", next: "q4_4" },
       { label: "선교를 통해서", next: "q4_4" },
     ],
     allowOther: true,
-    textLabel: "그 계기를 한 줄로 짧게 나눠주세요. (선택)",
-    next: "q4_4",
-  },
-  {
-    id: "q4_3",
-    section: "복음을 전한 경험",
-    title: "순종하기 위해, 혹은 반응하기 위해 어떻게 분별했나요?",
-    type: "multi",
-    required: true,
-    options: [
-      "기도로",
-      "말씀으로",
-      "주변 사람(공동체) / 상황으로",
-      "선하심에 대한 신뢰",
-    ],
     next: "q4_4",
   },
   {
     id: "q4_4",
     section: "복음을 전한 경험",
-    title: "복음을 전할 수 있게 된 변화가 있었나요?",
-    help: "심층 인터뷰가 가능하다면 또래, 이름, 연락처도 선택적으로 남겨주세요.",
+    title: "복음을 전할 수 있게 된 상황/사건이 있었나요? 짧게 나눠주세요.",
+    help: "작성하기 어렵다면 단어로도 좋습니다.",
     type: "textarea",
-    required: false,
+    required: true,
     next: "q5_1",
   },
   {
