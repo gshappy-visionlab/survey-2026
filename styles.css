@@ -123,6 +123,14 @@ textarea {
   line-height: 1.45;
 }
 
+.survey-note {
+  margin: -8px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
 .cover-intro {
   display: grid;
   gap: 14px;
