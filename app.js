@@ -1,4 +1,5 @@
 const GOOGLE_SCRIPT_URL = window.SURVEY_CONFIG?.googleScriptUrl || "";
+const MULTI_SELECT_HELP = "복수 선택이 가능합니다.";
 
 const questions = [
   {
@@ -262,17 +263,14 @@ const questions = [
   {
     id: "q4_2",
     section: "복음을 전한 경험",
-    title: "복음을 전하게 된 계기는 무엇인가요?",
-    help: "가장 가까운 계기를 선택해주세요.",
-    type: "single",
+    title: "복음을 어떻게 전했나요?",
+    type: "multi",
     required: true,
     options: [
-      { label: "말씀에 순종해서", next: "q4_4" },
-      { label: "주시는 마음에 반응해서", next: "q4_4" },
-      { label: "기회가 생겨서 (새생명전도축제, 대화 중에)", next: "q4_4" },
-      { label: "더 이상 미룰 수 없어서 / 대상자에게 더 이상 기회가 없을 것 같아서", next: "q4_4" },
-      { label: "사역을 통해서", next: "q4_4" },
-      { label: "선교를 통해서", next: "q4_4" },
+      "말로 복음을 설명하거나 나눈다.",
+      "나의 신앙 경험(간증)을 나눈다.",
+      "사랑과 섬김을 통해 복음을 보여준다.",
+      "교회나 공동체에 초대한다.",
     ],
     allowOther: true,
     next: "q4_4",
@@ -280,8 +278,8 @@ const questions = [
   {
     id: "q4_4",
     section: "복음을 전한 경험",
-    title: "복음을 전할 수 있게 된 상황/사건이 있었나요? 짧게 나눠주세요.",
-    help: "작성하기 어렵다면 단어로도 좋습니다.",
+    title: "복음을 전한 경험을 나눠주세요.",
+    help: "작성하기 어렵다면 한 문장이어도 좋습니다.",
     type: "textarea",
     required: true,
     next: "q5_1",
@@ -381,7 +379,7 @@ function renderQuestion() {
   const question = questionMap.get(state.currentId);
   const answer = state.answers[question.id];
   els.questionTitle.textContent = question.title;
-  els.questionHelp.textContent = question.help || "";
+  els.questionHelp.textContent = getQuestionHelp(question);
   els.formError.textContent = "";
   els.answerForm.innerHTML = "";
   els.nextBtn.textContent = question.next === "submit" ? "제출" : "다음";
@@ -389,6 +387,22 @@ function renderQuestion() {
   renderInput(question, answer);
   updateControls();
   updateProgress();
+}
+
+function getQuestionHelp(question) {
+  const helpItems = [];
+  let customHelp = question.help || "";
+
+  if (question.type?.startsWith("multi")) {
+    helpItems.push(MULTI_SELECT_HELP);
+    customHelp = customHelp.replace(MULTI_SELECT_HELP, "").trim().replace(/^[.,\s]+/, "");
+  }
+
+  if (customHelp) {
+    helpItems.push(customHelp);
+  }
+
+  return helpItems.join(" ");
 }
 
 function updateControls() {
