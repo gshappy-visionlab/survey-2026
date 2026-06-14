@@ -146,8 +146,8 @@ const questions = [
     id: "q2_1",
     section: "나의 복음",
     title: "복음을 어떻게 알게 되었나요?",
-    help: "가장 가까운 이유를 선택해주세요. 복수 선택이 가능합니다.",
-    type: "multiText",
+    help: "가장 가까운 이유를 선택해주세요.",
+    type: "singleText",
     required: true,
     options: [
       "복음을 잘 모릅니다.",
@@ -160,10 +160,9 @@ const questions = [
     ],
     allowOther: true,
     textLabel: "복음을 알게 된 이야기를 한 줄로 짧게 나눠주세요.",
-    noteRequired: (answer) => !answer.choices.includes("복음을 잘 모릅니다."),
+    noteRequired: (answer) => answer.choice !== "복음을 잘 모릅니다.",
     next: (answers) => {
-      const selected = answers.q2_1?.choices || [];
-      return selected.includes("복음을 잘 모릅니다.") ? "q3_1" : "q2_2";
+      return answers.q2_1?.choice === "복음을 잘 모릅니다." ? "q3_1" : "q2_2";
     },
   },
   {
