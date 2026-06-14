@@ -6,31 +6,27 @@ const questions = [
   {
     id: "q0_1",
     section: "기본 정보",
-    title: "또래에 해당하는 셀그룹을 선택해주세요.",
-    type: "single",
+    title: "기본 정보를 선택해주세요.",
+    type: "profile",
     required: true,
-    options: [
-      { label: "샤인(92~95)", next: "q0_2" },
-      { label: "하모니(96~99)", next: "q0_2" },
-      { label: "멜로디(00~03)", next: "q0_2" },
-      { label: "조이(04~06) / 07또래", next: "q0_2" },
-    ],
-  },
-  {
-    id: "q0_2",
-    section: "기본 정보",
-    title: "젊은이교회 과거에 참여했거나 참여 중인 활동을 선택해주세요. (누적)",
-    type: "multi",
-    required: true,
-    options: [
-      "새신자입니다",
-      "양육수료",
-      "제자훈련",
-      "국내선교/해외선교(MST)",
-      "셀 참여",
-      "섬김 및 봉사 (사역팀원 / 본교회 섬김 / 드림빌더 / 통일빌더 / 주목자 등)",
-      "리더 (사역팀 리더 / 셀리더 등)",
-    ],
+    groups: {
+      cellGroup: {
+        title: "또래에 해당하는 셀그룹을 선택해주세요.",
+        options: ["샤인(92~95)", "하모니(96~99)", "멜로디(00~03)", "조이(04~06) / 07또래"],
+      },
+      activities: {
+        title: "젊은이교회 과거에 참여했거나 참여 중인 활동을 선택해주세요. (누적)",
+        options: [
+          "새신자입니다",
+          "양육수료",
+          "제자훈련",
+          "국내선교/해외선교(MST)",
+          "셀 참여",
+          "섬김 및 봉사 (사역팀원 / 본교회 섬김 / 드림빌더 / 통일빌더 / 주목자 등)",
+          "리더 (사역팀 리더 / 셀리더 등)",
+        ],
+      },
+    },
     next: "q1_1",
   },
   {
@@ -91,12 +87,12 @@ const questions = [
   {
     id: "q1_5",
     section: "영적 무관심",
-    title: "신앙이나 영적인 문제에 대해 깊이 생각해 본 적이 있나요?",
+    title: "하나님의 뜻을 구하며 기도하는 영역이 있나요?",
     type: "single",
     required: true,
     options: [
-      { label: "깊이 생각해 본 적이 있다.", next: "q1_9" },
-      { label: "깊이 생각해 본 적이 없다.", next: "q1_6" },
+      { label: "네, 있습니다.", next: "q1_7" },
+      { label: "아니오, 딱히 없습니다.", next: "q1_6" },
     ],
   },
   {
@@ -147,17 +143,6 @@ const questions = [
     next: "q2_1",
   },
   {
-    id: "q1_9",
-    section: "영적 무관심",
-    title: "하나님의 뜻을 구하며 기도하는 영역이 있나요?",
-    type: "single",
-    required: true,
-    options: [
-      { label: "네, 있습니다.", next: "q1_7" },
-      { label: "아니오, 딱히 없습니다.", next: "q1_6" },
-    ],
-  },
-  {
     id: "q2_1",
     section: "나의 복음",
     title: "복음을 어떻게 알게 되었나요?",
@@ -175,8 +160,11 @@ const questions = [
     ],
     allowOther: true,
     textLabel: "복음을 알게 된 이야기를 한 줄로 짧게 나눠주세요.",
-    noteRequired: true,
-    next: "q2_2",
+    noteRequired: (answer) => !answer.choices.includes("복음을 잘 모릅니다."),
+    next: (answers) => {
+      const selected = answers.q2_1?.choices || [];
+      return selected.includes("복음을 잘 모릅니다.") ? "q3_1" : "q2_2";
+    },
   },
   {
     id: "q2_2",
@@ -442,6 +430,11 @@ function updateControls() {
 }
 
 function renderInput(question, answer) {
+  if (question.type === "profile") {
+    els.answerForm.appendChild(createProfileInput(question, answer));
+    return;
+  }
+
   if (question.type === "textarea") {
     els.answerForm.appendChild(createTextarea(question.id, answer?.text || ""));
     return;
@@ -462,6 +455,72 @@ function renderInput(question, answer) {
       els.answerForm.appendChild(createFollowupInput(question, answer));
     }
   }
+}
+
+function createProfileInput(question, answer) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "profile-fields";
+
+  wrapper.appendChild(
+    createProfileGroup({
+      questionId: question.id,
+      groupId: "cellGroup",
+      title: question.groups.cellGroup.title,
+      inputType: "radio",
+      options: question.groups.cellGroup.options,
+      selected: answer?.cellGroup ? [answer.cellGroup] : [],
+    }),
+  );
+
+  wrapper.appendChild(
+    createProfileGroup({
+      questionId: question.id,
+      groupId: "activities",
+      title: question.groups.activities.title,
+      inputType: "checkbox",
+      options: question.groups.activities.options,
+      selected: answer?.activities || [],
+      help: MULTI_SELECT_HELP,
+    }),
+  );
+
+  return wrapper;
+}
+
+function createProfileGroup({ questionId, groupId, title, inputType, options, selected, help }) {
+  const fieldset = document.createElement("fieldset");
+  fieldset.className = "profile-group";
+
+  const legend = document.createElement("legend");
+  legend.className = "followup-title";
+  legend.textContent = title;
+  fieldset.appendChild(legend);
+
+  if (help) {
+    const helpText = document.createElement("p");
+    helpText.className = "profile-help";
+    helpText.textContent = help;
+    fieldset.appendChild(helpText);
+  }
+
+  options.forEach((option) => {
+    const label = document.createElement("label");
+    label.className = "option";
+
+    const input = document.createElement("input");
+    input.type = inputType;
+    input.name = `${questionId}_${groupId}`;
+    input.value = option;
+    input.checked = selected.includes(option);
+
+    const span = document.createElement("span");
+    span.textContent = option;
+
+    label.append(input, span);
+    fieldset.appendChild(label);
+  });
+
+  return fieldset;
 }
 
 function createFollowupInput(question, answer) {
@@ -598,6 +657,13 @@ function createTextarea(questionId, value) {
 function collectAnswer(question) {
   const formData = new FormData(els.answerForm);
 
+  if (question.type === "profile") {
+    return {
+      cellGroup: formData.get(`${question.id}_cellGroup`) || "",
+      activities: formData.getAll(`${question.id}_activities`),
+    };
+  }
+
   if (question.type === "textarea") {
     return { text: (formData.get(question.id) || "").trim() };
   }
@@ -635,6 +701,12 @@ function collectNestedDetails(question, formData, choices) {
 function validateAnswer(question, answer) {
   if (!question.required) return "";
 
+  if (question.type === "profile") {
+    if (!answer.cellGroup) return "또래 셀그룹을 선택해주세요.";
+    if (!answer.activities.length) return "참여했거나 참여 중인 활동을 하나 이상 선택해주세요.";
+    return "";
+  }
+
   if (question.type === "textarea" && !answer.text) {
     return "답변을 입력해주세요.";
   }
@@ -656,11 +728,18 @@ function validateAnswer(question, answer) {
     return "기타를 선택했다면 내용을 입력해주세요.";
   }
 
-  if (question.noteRequired && !answer.note) {
+  if (isNoteRequired(question, answer) && !answer.note) {
     return "한 줄 나눔을 입력해주세요.";
   }
 
   return "";
+}
+
+function isNoteRequired(question, answer) {
+  if (typeof question.noteRequired === "function") {
+    return question.noteRequired(answer);
+  }
+  return Boolean(question.noteRequired);
 }
 
 function validateNestedDetails(question, answer) {
@@ -820,6 +899,8 @@ function formatAnswersForSheet() {
 
 function stringifyAnswer(answer) {
   const parts = [];
+  if (answer.cellGroup) parts.push(`또래: ${answer.cellGroup}`);
+  if (answer.activities?.length) parts.push(`활동: ${answer.activities.join(", ")}`);
   if (answer.choice) parts.push(answer.choice);
   if (answer.choices?.length) parts.push(answer.choices.join(", "));
   if (answer.details) {

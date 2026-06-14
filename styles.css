@@ -318,6 +318,30 @@ h2 {
   line-height: 1.45;
 }
 
+.profile-fields {
+  display: grid;
+  gap: 22px;
+}
+
+.profile-group {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.profile-group + .profile-group {
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.profile-help {
+  margin: -4px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
 .other-field {
   display: grid;
   grid-template-columns: auto minmax(180px, 1fr);
