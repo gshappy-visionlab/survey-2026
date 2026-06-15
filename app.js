@@ -384,7 +384,6 @@ const els = {
   resultCopy: document.querySelector("#result-copy"),
   resultActions: document.querySelector("#result-actions"),
   startBtn: document.querySelector("#start-btn"),
-  restartBtn: document.querySelector("#restart-btn"),
   consentModal: document.querySelector("#consent-modal"),
   consentCheckbox: document.querySelector("#consent-checkbox"),
   consentCloseBtn: document.querySelector("#consent-close-btn"),
@@ -995,23 +994,9 @@ const resultContent = {
   },
 };
 
-function restart() {
-  state.currentId = START_QUESTION_ID;
-  state.history = [];
-  state.answers = {};
-  state.submitting = false;
-  state.transitioning = false;
-  els.resultView.classList.add("hidden");
-  els.resultView.classList.remove("is-entering");
-  els.coverView.classList.remove("hidden");
-  els.surveyView.classList.remove("hidden");
-  els.surveyView.classList.add("hidden");
-}
-
 els.startBtn.addEventListener("click", openConsentModal);
 els.consentCheckbox.addEventListener("change", updateConsentButton);
 els.consentCloseBtn.addEventListener("click", closeConsentModal);
 els.consentConfirmBtn.addEventListener("click", startSurvey);
 els.nextBtn.addEventListener("click", handleNext);
 els.backBtn.addEventListener("click", handleBack);
-els.restartBtn.addEventListener("click", restart);
