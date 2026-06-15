@@ -792,11 +792,12 @@ function getNextId(question, answer) {
 }
 
 function updateProgress() {
-  const answeredCount = Object.keys(state.answers).length;
   const totalCount = questions.length;
-  const percent = Math.min(100, Math.max(4, ((answeredCount + 1) / totalCount) * 100));
+  const currentIndex = questions.findIndex((question) => question.id === state.currentId);
+  const currentNumber = currentIndex >= 0 ? currentIndex + 1 : 1;
+  const percent = Math.min(100, Math.max(4, (currentNumber / totalCount) * 100));
   els.progressFill.style.width = `${percent}%`;
-  els.progressText.textContent = `${Math.round(percent)}%`;
+  els.progressText.textContent = `${currentNumber}/${totalCount}`;
 }
 
 function wait(ms) {
