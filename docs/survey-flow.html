@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>설문 흐름도 — gshappy-survey</title>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#f0f9ff',
+        primaryTextColor: '#0c4a6e',
+        primaryBorderColor: '#0ea5e9',
+        lineColor: '#64748b',
+        secondaryColor: '#fefce8',
+        tertiaryColor: '#f0fdf4',
+        fontSize: '13px',
+        fontFamily: 'Apple SD Gothic Neo, Noto Sans KR, sans-serif',
+      },
+      flowchart: { curve: 'basis', padding: 20 },
+    });
+
+    window.downloadSVG = function () {
+      const svg = document.querySelector('.mermaid svg');
+      if (!svg) return alert('그래프가 아직 렌더링되지 않았습니다. 잠시 후 다시 시도해주세요.');
+      const blob = new Blob([svg.outerHTML], { type: 'image/svg+xml;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'survey-flow.svg';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    };
+
+    window.downloadPNG = function () {
+      const svg = document.querySelector('.mermaid svg');
+      if (!svg) return alert('그래프가 아직 렌더링되지 않았습니다. 잠시 후 다시 시도해주세요.');
+
+      const scale = 2;
+      const svgBox = svg.getBoundingClientRect();
+      const w = svgBox.width * scale;
+      const h = svgBox.height * scale;
+
+      const clone = svg.cloneNode(true);
+      clone.setAttribute('width', w);
+      clone.setAttribute('height', h);
+
+      // embed fonts so text renders offline
+      const style = document.createElement('style');
+      style.textContent = `* { font-family: Arial, sans-serif; }`;
+      clone.insertBefore(style, clone.firstChild);
+
+      const xml = new XMLSerializer().serializeToString(clone);
+      const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0);
+        const a = document.createElement('a');
+        a.download = 'survey-flow.png';
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+      };
+      img.src = dataUrl;
+    };
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 2rem;
+    }
+    h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .subtitle { font-size: 0.85rem; color: #64748b; margin-bottom: 2rem; }
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
+      margin-bottom: 2rem;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.78rem; color: #475569;
+    }
+    .dot {
+      width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0;
+    }
+    .graph-wrapper {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 2rem;
+      overflow-x: auto;
+    }
+    .mermaid { min-width: 900px; }
+  </style>
+</head>
+<body>
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:0.4rem;">
+    <h1>설문 흐름도</h1>
+    <div style="display:flex;gap:0.5rem;">
+      <button onclick="downloadSVG()" style="padding:0.45rem 1rem;border:1.5px solid #0ea5e9;border-radius:7px;background:#fff;color:#0284c7;font-size:0.82rem;cursor:pointer;font-weight:600;">SVG 다운로드</button>
+      <button onclick="downloadPNG()" style="padding:0.45rem 1rem;border:none;border-radius:7px;background:#0ea5e9;color:#fff;font-size:0.82rem;cursor:pointer;font-weight:600;">PNG 다운로드</button>
+    </div>
+  </div>
+  <p class="subtitle">gshappy-survey · app.js 기준 · 2026-06</p>
+
+  <div class="legend">
+    <div class="legend-item"><div class="dot" style="background:#fff7ed;border:1.5px solid #c2410c;"></div>하나님에 대한 필요 (S1a)</div>
+    <div class="legend-item"><div class="dot" style="background:#eff6ff;border:1.5px solid #1d4ed8;"></div>복음 이해 (S1b)</div>
+    <div class="legend-item"><div class="dot" style="background:#f0fdf4;border:1.5px solid #15803d;"></div>영적 무관심 (S1c)</div>
+    <div class="legend-item"><div class="dot" style="background:#fefce8;border:1.5px solid #a16207;"></div>바쁨과 우선순위 (S1d)</div>
+    <div class="legend-item"><div class="dot" style="background:#f5f3ff;border:1.5px solid #7c3aed;"></div>나의 복음 (S2)</div>
+    <div class="legend-item"><div class="dot" style="background:#ecfeff;border:1.5px solid #0e7490;"></div>복음 전하기 (S3)</div>
+    <div class="legend-item"><div class="dot" style="background:#eef2ff;border:1.5px solid #4338ca;"></div>복음 전한 경험 (S4A)</div>
+    <div class="legend-item"><div class="dot" style="background:#f0fdfa;border:1.5px solid #0f766e;"></div>전하고 싶은 대상 (S4B)</div>
+    <div class="legend-item"><div class="dot" style="background:#fdf4ff;border:1.5px solid #7e22ce;"></div>비전과 사명 (S5)</div>
+    <div class="legend-item"><div class="dot" style="background:#f1f5f9;border:1.5px solid #475569;"></div>결과</div>
+    <div class="legend-item"><span style="font-size:1rem;">◇</span>분기 노드 (single choice)</div>
+    <div class="legend-item"><span style="font-size:1rem;">▭</span>입력 노드 (multi / textarea)</div>
+  </div>
+
+  <div class="graph-wrapper">
+    <pre class="mermaid">
+%%{init: {'flowchart': {'htmlLabels': true}}}%%
+flowchart TD
+
+  START(["▶ 시작"])
+  style START fill:#0ea5e9,color:#fff,stroke:#0284c7
+
+  %% ── 섹션 0: 기본 정보 ──────────────────────────────────
+  q0_1["q0_1 ·  profile\n기본 정보\n셀그룹 + 활동 선택"]
+  style q0_1 fill:#f1f5f9,stroke:#94a3b8
+
+  %% ── 섹션 1a: 하나님에 대한 필요 ────────────────────────
+  q1_1{"q1_1 ·  single\n하나님이 필요한가?"}
+  style q1_1 fill:#fff7ed,stroke:#c2410c
+
+  q1_2["q1_2 ·  multi\n필요하지 않은 이유"]
+  style q1_2 fill:#fff7ed,stroke:#c2410c
+
+  %% ── 섹션 1b: 복음에 대한 이해 ──────────────────────────
+  q1_3{"q1_3 ·  single\n십자가가 믿어지나?"}
+  style q1_3 fill:#eff6ff,stroke:#1d4ed8
+
+  q1_4["q1_4 ·  multi\n믿어지지 않는 이유"]
+  style q1_4 fill:#eff6ff,stroke:#1d4ed8
+
+  %% ── 섹션 1c: 영적 무관심 ────────────────────────────────
+  q1_5{"q1_5 ·  single\n하나님의 뜻 구하며\n기도하는 영역 있나?"}
+  style q1_5 fill:#f0fdf4,stroke:#15803d
+
+  q1_6["q1_6 ·  multi\n기도하지 않는 이유"]
+  style q1_6 fill:#f0fdf4,stroke:#15803d
+
+  %% ── 섹션 1d: 바쁨과 우선순위 ───────────────────────────
+  q1_7{"q1_7 ·  single\n하나님과의 관계\n우선순위?"}
+  style q1_7 fill:#fefce8,stroke:#a16207
+
+  q1_8["q1_8 ·  multi\n최근 집중하는 것"]
+  style q1_8 fill:#fefce8,stroke:#a16207
+
+  %% ── 섹션 2: 나의 복음 ──────────────────────────────────
+  q2_1{"q2_1 ·  singleText\n복음을 어떻게\n알게 되었나?"}
+  style q2_1 fill:#f5f3ff,stroke:#7c3aed
+
+  q2_2["q2_2 ·  textarea\n나의 복음 서술"]
+  style q2_2 fill:#f5f3ff,stroke:#7c3aed
+
+  %% ── 섹션 3: 복음 전하기 ─────────────────────────────────
+  q3_1{"q3_1 ·  single\n복음을 전하고 있나?"}
+  style q3_1 fill:#ecfeff,stroke:#0e7490
+
+  q3_2["q3_2 ·  multi\n전하기 어려운 이유\n복수선택 → 분기"]
+  style q3_2 fill:#ecfeff,stroke:#0e7490
+
+  q3_3["q3_3 ·  multi\n복음대로 살지 못하는 영역"]
+  style q3_3 fill:#ecfeff,stroke:#0e7490
+
+  q3_4["q3_4 ·  multi\n전하기 두려운 이유\n▸ 중첩 옵션 3종"]
+  style q3_4 fill:#ecfeff,stroke:#0e7490
+
+  %% ── 섹션 4A: 복음 전한 경험 ────────────────────────────
+  q4_1y["q4_1_yes ·  multi\n누구에게 전했나?\n▸ 이웃 중첩 옵션"]
+  style q4_1y fill:#eef2ff,stroke:#4338ca
+
+  q4_2["q4_2 ·  multi\n어떻게 전했나?"]
+  style q4_2 fill:#eef2ff,stroke:#4338ca
+
+  q4_4["q4_4 ·  textarea\n복음 전한 경험 서술"]
+  style q4_4 fill:#eef2ff,stroke:#4338ca
+
+  %% ── 섹션 4B: 전하고 싶은 대상 ─────────────────────────
+  q4_1n["q4_1_no ·  multi\n전하고 싶은 대상"]
+  style q4_1n fill:#f0fdfa,stroke:#0f766e
+
+  %% ── 섹션 5: 비전과 사명 ─────────────────────────────────
+  q5_1["q5_1 ·  single\n5N 영역\nNext · Nomad · North · Nation · Neighbor"]
+  style q5_1 fill:#fdf4ff,stroke:#7e22ce
+
+  q5_2{"q5_2 ·  single\n비전/사명을 알고 있나?"}
+  style q5_2 fill:#fdf4ff,stroke:#7e22ce
+
+  q5_3["q5_3 ·  textarea\n비전/사명 서술"]
+  style q5_3 fill:#fdf4ff,stroke:#7e22ce
+
+  q5_4["q5_4 ·  multi\n비전 모르는 이유"]
+  style q5_4 fill:#fdf4ff,stroke:#7e22ce
+
+  %% ── 제출 ────────────────────────────────────────────────
+  SUBMIT(["📋 제출"])
+  style SUBMIT fill:#334155,color:#f8fafc,stroke:#1e293b
+
+  %% ── 결과 유형 ───────────────────────────────────────────
+  RW(["⭐ witness\n복음을 전한 증인\n우선순위 ①"])
+  style RW fill:#fef9c3,stroke:#ca8a04
+
+  RV(["🧭 vision\n비전 구체화\n우선순위 ②"])
+  style RV fill:#ecfdf5,stroke:#16a34a
+
+  RG(["📖 gospel\n복음 연결고리 발견\n우선순위 ③"])
+  style RG fill:#eff6ff,stroke:#2563eb
+
+  RC(["💪 courage\n용기와 훈련\n우선순위 ④"])
+  style RC fill:#fef2f2,stroke:#dc2626
+
+  RR(["🙏 reflection\nfallback\n우선순위 ⑤"])
+  style RR fill:#f1f5f9,stroke:#94a3b8
+
+  %% ════════════════════════════════════════════════════════
+  %% 엣지 (흐름)
+  %% ════════════════════════════════════════════════════════
+
+  START --> q0_1
+  q0_1 --> q1_1
+
+  %% S1a: 하나님에 대한 필요
+  q1_1 -->|"필요합니다"| q1_3
+  q1_1 -->|"그다지 필요하지 않다"| q1_2
+  q1_2 --> q1_3
+
+  %% S1b: 복음 이해
+  q1_3 -->|"믿어집니다"| q1_5
+  q1_3 -->|"아직 모르겠습니다"| q1_4
+  q1_4 --> q1_5
+
+  %% S1c: 영적 무관심
+  q1_5 -->|"네, 있습니다"| q1_7
+  q1_5 -->|"아니오, 없습니다"| q1_6
+  q1_6 --> q1_7
+
+  %% S1d: 바쁨과 우선순위
+  q1_7 -->|"네 / 아니오"| q1_8
+  q1_8 --> q2_1
+
+  %% S2: 나의 복음
+  q2_1 -->|"복음을 잘 모릅니다"| q3_1
+  q2_1 -->|"기타 선택지"| q2_2
+  q2_2 --> q3_1
+
+  %% S3: 복음 전하기
+  q3_1 -->|"네"| q4_1y
+  q3_1 -->|"아니오"| q3_2
+
+  q3_2 -->|"①복음대로 살지 못해서\n포함 시"| q3_3
+  q3_2 -->|"②두려워서 포함\n①없을 때"| q3_4
+  q3_2 -->|"① ② 모두 없으면"| q4_1n
+
+  q3_3 -->|"q3_2에서\n두려워서도 선택됨"| q3_4
+  q3_3 -->|"두려워서\n미선택"| q4_1n
+  q3_4 --> q4_1n
+
+  %% S4A: 복음 전한 경험
+  q4_1y --> q4_2
+  q4_2  --> q4_4
+  q4_4  --> q5_1
+
+  %% S4B: 전하고 싶은 대상
+  q4_1n --> q5_1
+
+  %% S5: 비전과 사명
+  q5_1 --> q5_2
+  q5_2 -->|"안다"| q5_3
+  q5_2 -->|"모른다"| q5_4
+  q5_3 --> SUBMIT
+  q5_4 --> SUBMIT
+
+  %% 결과 분기 (getResultType 로직)
+  SUBMIT -->|"q3_1 = 네 → ①"| RW
+  SUBMIT -->|"q5_2 = 안다 → ②"| RV
+  SUBMIT -->|"q1_3 = 아직 모르겠습니다 → ③"| RG
+  SUBMIT -->|"q3_2 응답 있음 → ④"| RC
+  SUBMIT -->|"fallback → ⑤"| RR
+    </pre>
+  </div>
+
+  <div style="margin-top:2rem;font-size:0.8rem;color:#94a3b8;">
+    <strong>결과 판정 우선순위 (getResultType)</strong>:
+    ① q3_1 = "네" → <em>witness</em> &nbsp;|&nbsp;
+    ② q5_2 = "안다" → <em>vision</em> &nbsp;|&nbsp;
+    ③ q1_3 = "아직 모르겠습니다." → <em>gospel</em> &nbsp;|&nbsp;
+    ④ q3_2 응답 존재 → <em>courage</em> &nbsp;|&nbsp;
+    ⑤ fallback → <em>reflection</em>
+    <br/><br/>
+    <strong>q3_2 분기 상세</strong>:
+    "복음대로 살고 있지 못해서" 선택 → q3_3 먼저 &nbsp;|&nbsp;
+    그 후 (또는 단독으로) "전하기 두려워서" 선택 → q3_4 &nbsp;|&nbsp;
+    둘 다 없으면 → q4_1_no
+    <br/><br/>
+    총 <strong>23개 노드</strong> · <strong>5가지 결과 유형</strong>
+  </div>
+</body>
+</html>
