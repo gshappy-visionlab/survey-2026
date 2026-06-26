@@ -287,6 +287,28 @@ h2 {
   transform: translateY(-1px);
 }
 
+.option--ranked {
+  grid-template-columns: 22px 30px 1fr;
+}
+
+.rank-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-top: -1px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.rank-badge[data-empty="true"] {
+  visibility: hidden;
+}
+
 .nested-option-group {
   display: grid;
   gap: 8px;

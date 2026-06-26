@@ -126,9 +126,10 @@ const questions = [
   {
     id: "q1_8",
     section: "바쁨과 우선순위",
-    title: "최근 많은 관심과 에너지를 쏟고 있는 것은 무엇인가요?",
+    title: "최근 많은 관심과 에너지를 쏟고 있는 것은 무엇인가요? (복수 선택)",
     type: "multi",
     required: true,
+    rankChoices: true,
     options: [
       "학업 / 자기개발",
       "취업 / 진로준비",
@@ -145,7 +146,7 @@ const questions = [
   {
     id: "q2_1",
     section: "나의 복음",
-    title: "복음을 어떻게 알게 되었나요?",
+    title: "복음을 어떻게 나의 복음으로 고백하게 되었나요?",
     help: "가장 가까운 이유를 선택해주세요.",
     type: "singleText",
     required: true,
@@ -156,7 +157,6 @@ const questions = [
       "선교를 통해",
       "사역을 통해",
       "고난(시련)을 통해",
-      "누군가의 전도를 통해",
     ],
     allowOther: true,
     textLabel: "복음을 알게 된 이야기를 한 줄로 짧게 나눠주세요.",
@@ -319,6 +319,7 @@ const questions = [
     type: "single",
     required: true,
     options: ["Next (다음세대)", "Nomad (이주민)", "North (북한)", "Nation (열방)", "Neighbor (이웃)"],
+    allowOther: true,
     next: "q5_2",
   },
   {
@@ -467,7 +468,7 @@ function renderInput(question, answer) {
     });
 
     if (question.allowOther) {
-      els.answerForm.appendChild(createOtherInput(question.id, inputType, answer));
+      els.answerForm.appendChild(createOtherInput(question.id, inputType, answer, { ranked: isRankedQuestion(question) }));
     }
 
     if (question.type.endsWith("Text")) {
@@ -500,13 +501,15 @@ function createProfileInput(question, answer) {
       options: question.groups.activities.options,
       selected: answer?.activities || [],
       help: MULTI_SELECT_HELP,
+      allowOther: true,
+      otherValue: answer?.other || "",
     }),
   );
 
   return wrapper;
 }
 
-function createProfileGroup({ questionId, groupId, title, inputType, options, selected, help }) {
+function createProfileGroup({ questionId, groupId, title, inputType, options, selected, help, allowOther, otherValue }) {
   const fieldset = document.createElement("fieldset");
   fieldset.className = "profile-group";
 
@@ -539,6 +542,10 @@ function createProfileGroup({ questionId, groupId, title, inputType, options, se
     fieldset.appendChild(label);
   });
 
+  if (allowOther) {
+    fieldset.appendChild(createOtherInput(`${questionId}_${groupId}`, inputType, { other: otherValue }));
+  }
+
   return fieldset;
 }
 
@@ -564,6 +571,7 @@ function createFollowupInput(question, answer) {
 
 function createOption(question, inputType, labelText, index, answer) {
   const nestedItems = question.nestedOptions?.[labelText];
+  const isRanked = isRankedQuestion(question);
   const wrapper = nestedItems ? document.createElement("div") : null;
   if (wrapper) {
     wrapper.className = "nested-option-group";
@@ -571,13 +579,18 @@ function createOption(question, inputType, labelText, index, answer) {
 
   const label = document.createElement("label");
   label.className = nestedItems ? "option has-nested-options" : "option";
+  if (isRanked) label.classList.add("option--ranked");
 
   const input = document.createElement("input");
   input.type = inputType;
   input.name = question.id;
   input.value = labelText;
   input.checked = answer?.choices?.includes(labelText) || answer?.choice === labelText;
+  input.dataset.rank = getSavedChoiceRank(answer, labelText);
   input.addEventListener("change", () => {
+    if (isRanked) {
+      updateRankedChoices(question.id, input);
+    }
     if (nestedItems) {
       updateNestedVisibility(wrapper, input.checked);
     }
@@ -587,10 +600,15 @@ function createOption(question, inputType, labelText, index, answer) {
     }, 120);
   });
 
+  const rankBadge = createRankBadge(input.dataset.rank);
   const span = document.createElement("span");
   span.textContent = labelText;
 
-  label.append(input, span);
+  if (isRanked) {
+    label.append(input, rankBadge, span);
+  } else {
+    label.append(input, span);
+  }
   if (!nestedItems) return label;
 
   const nested = createNestedOptions(question.id, labelText, nestedItems, answer, input.checked);
@@ -634,15 +652,66 @@ function shouldAutoAdvance(question) {
   return question.type === "single" && question.options?.length === 2 && !question.allowOther;
 }
 
-function createOtherInput(questionId, inputType, answer) {
+function isRankedQuestion(question) {
+  return question.type?.startsWith("multi") && question.rankChoices;
+}
+
+function getSavedChoiceRank(answer, labelText) {
+  const rank = answer?.choices?.indexOf(labelText) ?? -1;
+  return rank >= 0 ? String(rank + 1) : "";
+}
+
+function createRankBadge(rank) {
+  const badge = document.createElement("span");
+  badge.className = "rank-badge";
+  badge.textContent = rank;
+  badge.dataset.empty = rank ? "false" : "true";
+  return badge;
+}
+
+function updateRankedChoices(questionId, changedInput) {
+  const inputs = Array.from(els.answerForm.querySelectorAll(`input[name="${questionId}"]`));
+
+  inputs.forEach((input) => {
+    if (!input.checked) input.dataset.rank = "";
+  });
+
+  if (changedInput?.checked && !changedInput.dataset.rank) {
+    const maxRank = Math.max(0, ...inputs.map((input) => Number(input.dataset.rank) || 0));
+    changedInput.dataset.rank = String(maxRank + 1);
+  }
+
+  inputs
+    .filter((input) => input.checked)
+    .sort((a, b) => (Number(a.dataset.rank) || 0) - (Number(b.dataset.rank) || 0))
+    .forEach((input, index) => {
+      input.dataset.rank = String(index + 1);
+    });
+
+  inputs.forEach((input) => {
+    const badge = input.closest(".option")?.querySelector(".rank-badge");
+    if (!badge) return;
+    badge.textContent = input.dataset.rank;
+    badge.dataset.empty = input.dataset.rank ? "false" : "true";
+  });
+}
+
+function createOtherInput(questionId, inputType, answer, options = {}) {
   const wrapper = document.createElement("label");
   wrapper.className = "option";
+  if (options.ranked) wrapper.classList.add("option--ranked");
 
   const input = document.createElement("input");
   input.type = inputType;
   input.name = questionId;
   input.value = "__other__";
   input.checked = Boolean(answer?.other);
+  input.dataset.rank = options.ranked && answer?.choices?.includes("기타") ? String(answer.choices.indexOf("기타") + 1) : "";
+  input.addEventListener("change", () => {
+    if (options.ranked) {
+      updateRankedChoices(questionId, input);
+    }
+  });
 
   const text = document.createElement("input");
   text.className = "text-input";
@@ -651,16 +720,23 @@ function createOtherInput(questionId, inputType, answer) {
   text.value = answer?.other || "";
   text.addEventListener("focus", () => {
     input.checked = true;
+    if (options.ranked && !input.dataset.rank) {
+      updateRankedChoices(questionId, input);
+    }
   });
 
   const field = document.createElement("span");
   field.className = "other-field";
 
   const caption = document.createElement("span");
-  caption.textContent = "기타";
+  caption.textContent = "기타: 직접 입력";
 
   field.append(caption, text);
-  wrapper.append(input, field);
+  if (options.ranked) {
+    wrapper.append(input, createRankBadge(input.dataset.rank), field);
+  } else {
+    wrapper.append(input, field);
+  }
   return wrapper;
 }
 
@@ -677,9 +753,14 @@ function collectAnswer(question) {
   const formData = new FormData(els.answerForm);
 
   if (question.type === "profile") {
+    const rawActivities = formData.getAll(`${question.id}_activities`);
+    const other = (formData.get(`${question.id}_activities_other`) || "").trim();
+    const activities = rawActivities.map((choice) => (choice === "__other__" ? "기타" : choice));
+
     return {
       cellGroup: formData.get(`${question.id}_cellGroup`) || "",
-      activities: formData.getAll(`${question.id}_activities`),
+      activities,
+      other,
     };
   }
 
@@ -695,12 +776,20 @@ function collectAnswer(question) {
     return { choice, other, note };
   }
 
-  const rawChoices = formData.getAll(question.id);
+  const rawChoices = isRankedQuestion(question)
+    ? getRankedChoices(question.id)
+    : formData.getAll(question.id);
   const other = (formData.get(`${question.id}_other`) || "").trim();
   const note = (formData.get(`${question.id}_note`) || "").trim();
   const choices = rawChoices.map((choice) => (choice === "__other__" ? "기타" : choice));
   const details = collectNestedDetails(question, formData, choices);
   return { choices, details, other, note };
+}
+
+function getRankedChoices(questionId) {
+  return Array.from(els.answerForm.querySelectorAll(`input[name="${questionId}"]:checked`))
+    .sort((a, b) => (Number(a.dataset.rank) || 0) - (Number(b.dataset.rank) || 0))
+    .map((input) => input.value);
 }
 
 function collectNestedDetails(question, formData, choices) {
@@ -723,6 +812,7 @@ function validateAnswer(question, answer) {
   if (question.type === "profile") {
     if (!answer.cellGroup) return "또래 셀그룹을 선택해주세요.";
     if (!answer.activities.length) return "참여했거나 참여 중인 활동을 하나 이상 선택해주세요.";
+    if (answer.activities.includes("기타") && !answer.other) return "기타를 선택했다면 내용을 입력해주세요.";
     return "";
   }
 
@@ -797,7 +887,7 @@ function updateProgress() {
   const currentNumber = currentIndex >= 0 ? currentIndex + 1 : 1;
   const percent = Math.min(100, Math.max(4, (currentNumber / totalCount) * 100));
   els.progressFill.style.width = `${percent}%`;
-  els.progressText.textContent = `${currentNumber}/${totalCount}`;
+  els.progressText.textContent = `${Math.round(percent)}%`;
 }
 
 function wait(ms) {
