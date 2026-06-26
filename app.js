@@ -1,6 +1,19 @@
-const GOOGLE_SCRIPT_URL = window.SURVEY_CONFIG?.googleScriptUrl || "";
+const GOOGLE_SCRIPT_URLS = parseGoogleScriptUrls(window.SURVEY_CONFIG?.googleScriptUrl);
 const MULTI_SELECT_HELP = "복수 선택이 가능합니다.";
 const START_QUESTION_ID = "q0_1";
+
+function parseGoogleScriptUrls(value) {
+  return String(value || "")
+    .split(",")
+    .map((url) => url.trim())
+    .filter(Boolean);
+}
+
+function pickGoogleScriptUrl() {
+  if (GOOGLE_SCRIPT_URLS.length === 0) return "";
+  const index = Math.floor(Math.random() * GOOGLE_SCRIPT_URLS.length);
+  return GOOGLE_SCRIPT_URLS[index];
+}
 
 const questions = [
   {
@@ -976,15 +989,17 @@ async function submitSurvey() {
   };
 
   try {
-    if (GOOGLE_SCRIPT_URL) {
-      await fetch(GOOGLE_SCRIPT_URL, {
+    const googleScriptUrl = pickGoogleScriptUrl();
+
+    if (googleScriptUrl) {
+      await fetch(googleScriptUrl, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload),
       });
     } else {
-      console.info("Google Apps Script URL이 비어 있어 로컬 저장만 건너뜁니다.", payload);
+      console.info("Google Apps Script URL 목록이 비어 있어 저장을 건너뜁니다.", payload);
     }
     showResult(payload.resultType);
   } catch (error) {

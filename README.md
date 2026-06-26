@@ -8,7 +8,10 @@
 2. 아래 코드를 붙여넣고 저장합니다.
 3. `배포 > 새 배포 > 웹 앱`을 선택합니다.
 4. 실행 권한은 본인, 액세스 권한은 설문 응답자가 접근 가능한 범위로 설정합니다.
-5. 발급된 웹 앱 URL을 `app.js` 상단의 `GOOGLE_SCRIPT_URL`에 넣습니다.
+5. 발급된 웹 앱 URL을 GitHub Actions secret `GOOGLE_SCRIPT_URL`에 넣습니다.
+   - 여러 시트로 부하를 나눌 때는 웹 앱 URL을 쉼표로 구분합니다.
+   - 예: `https://script.google.com/macros/s/.../exec,https://script.google.com/macros/s/.../exec`
+   - 제출 시마다 URL 목록 중 하나를 랜덤으로 선택해 저장합니다.
 
 ```js
 function doPost(e) {
