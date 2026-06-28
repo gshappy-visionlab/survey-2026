@@ -1,5 +1,6 @@
 const GOOGLE_SCRIPT_URLS = parseGoogleScriptUrls(window.SURVEY_CONFIG?.googleScriptUrl);
 const MULTI_SELECT_HELP = "복수 선택이 가능합니다.";
+const RANKED_SELECT_HELP = "우선순위를 고려해서 선택해 주세요.";
 const START_QUESTION_ID = "q0_1";
 
 function parseGoogleScriptUrls(value) {
@@ -446,7 +447,7 @@ function getQuestionHelp(question) {
   let customHelp = question.help || "";
 
   if (question.type?.startsWith("multi")) {
-    helpItems.push(MULTI_SELECT_HELP);
+    helpItems.push(isRankedQuestion(question) ? RANKED_SELECT_HELP : MULTI_SELECT_HELP);
     customHelp = customHelp.replace(MULTI_SELECT_HELP, "").trim().replace(/^[.,\s]+/, "");
   }
 
