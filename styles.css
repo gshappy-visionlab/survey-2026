@@ -124,11 +124,11 @@ textarea {
 }
 
 .survey-note {
-  margin: -8px 0 0;
+  margin: -14px 0 0;
   color: var(--muted);
   font-size: 0.9rem;
   font-weight: 700;
-  line-height: 1.55;
+  line-height: 1.45;
 }
 
 .cover-intro {
